@@ -1,0 +1,109 @@
+What is DRF and Why Do We Need It?
+
+Django by default is built for:
+
+HTML templates
+
+Server-side rendering
+
+But we are building:
+
+React frontend + Django backend (API based)
+
+So instead of returning HTML pages, we return:
+
+{
+  "title": "Learn DRF",
+  "completed": false
+}
+
+DRF helps us:
+
+Build REST APIs easily
+
+Serialize models into JSON
+
+Handle authentication
+
+Add permissions
+
+Validate input
+
+Build scalable APIs
+
+Without DRF, building APIs manually in Django is painful.
+
+🚀 STEP 1 — Install DRF (if not already)
+
+Inside backend (venv active):
+
+pip install djangorestframework
+
+Update requirements:
+
+pip freeze > requirements.txt
+⚙️ STEP 2 — Add DRF to INSTALLED_APPS
+
+Open:
+
+config/settings/base.py
+
+Add:
+
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+]
+🧠 Why Add It Here?
+
+Because:
+
+It registers DRF internally
+
+Enables API features
+
+Enables browsable API
+
+Enables authentication system
+
+⚙️ STEP 3 — Configure REST_FRAMEWORK
+
+Still inside base.py, add:
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+}
+🧠 Why These Settings?
+🔹 Authentication Classes
+
+Defines:
+
+How users are authenticated.
+
+Currently:
+
+SessionAuthentication → for testing in browser
+
+Later we will replace with:
+
+JWTAuthentication
+
+🔹 Permission Classes
+
+Defines:
+
+Who can access APIs.
+
+Right now:
+
+AllowAny → anyone can access
+
+Later we will change to:
+
+IsAuthenticated → only logged-in users
+
