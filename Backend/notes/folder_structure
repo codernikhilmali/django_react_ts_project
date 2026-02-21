@@ -1,0 +1,86 @@
+backend/
+│
+├── config/                 # Project configuration
+│   ├── settings/
+│   │   ├── base.py
+│   │   ├── development.py
+│   │   └── production.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+│
+├── apps/
+│   ├── users/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   ├── services.py
+│   │   ├── permissions.py
+│   │   └── tests.py
+│   │
+│   └── todos/
+│       ├── models.py
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       ├── services.py
+│       ├── permissions.py
+│       └── tests.py
+│
+├── core/                   # Shared utilities
+│   ├── permissions.py
+│   ├── pagination.py
+│   ├── utils.py
+│   └── mixins.py
+│
+├── manage.py
+└── requirements.txt
+
+1️⃣ settings split (VERY IMPORTANT)
+
+Instead of one huge settings.py, we use:
+
+base.py → common settings
+
+development.py → debug true
+
+production.py → debug false, security settings
+
+This is how real production apps are deployed.
+
+2️⃣ apps folder
+
+We separate by domain:
+
+users → authentication related logic
+
+todos → todo business logic
+
+Each app is independent.
+
+3️⃣ services.py
+
+Instead of putting business logic in views, we separate it.
+
+Example:
+
+Creating todo logic
+
+Complex validation
+
+Custom calculations
+
+This keeps views clean.
+
+4️⃣ core folder
+
+Reusable things go here:
+
+Custom permissions
+
+Pagination classes
+
+Helper functions
+
+This prevents duplication.

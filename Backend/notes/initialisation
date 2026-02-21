@@ -1,0 +1,50 @@
+1️⃣ Create Virtual Environment
+python -m venv venv
+
+Activate it (Windows):
+
+venv\Scripts\activate
+
+You should see:
+
+(venv)
+
+in terminal. That means you're inside virtual environment ✅
+
+📦 2️⃣ Install Required Packages
+
+Install:
+
+pip install django djangorestframework psycopg2-binary djangorestframework-simplejwt django-cors-headers
+
+What we installed:
+
+django → main framework
+
+djangorestframework → API support
+
+psycopg2-binary → PostgreSQL connector
+
+simplejwt → JWT auth
+
+cors-headers → allow React frontend to talk to backend
+
+Create Project
+django-admin startproject config .
+
+Then create apps folder manually:
+
+backend/
+   config/
+   apps/
+
+Move default app location:
+
+Create apps folder:
+
+mkdir apps
+
+Then create apps like this:
+
+python manage.py startapp users apps/users
+python manage.py startapp todos apps/todos
