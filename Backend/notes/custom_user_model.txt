@@ -1,0 +1,274 @@
+That’s a great point to pause and write proper notes 👏
+You’ve just crossed one of the most important Django concepts — custom authentication.
+
+Let’s document this clearly so you can revise later.
+
+---
+
+# 📘 Notes: Django User Model – Default vs Custom
+
+---
+
+# 🧠 1️⃣ Default Django User Model
+
+Django provides a built-in User model:
+
+```python
+from django.contrib.auth.models import User
+```
+
+It contains:
+
+* username
+* email
+* password
+* first_name
+* last_name
+* is_staff
+* is_active
+* is_superuser
+* last_login
+* groups & permissions
+
+### 📌 When to Use Default User?
+
+Use default User when:
+
+* You’re building a small project
+* Username-based login is fine
+* You don’t need structural changes
+* You don’t need custom authentication logic
+
+### ❌ Limitations
+
+* Hard to remove `username`
+* Hard to change primary login field
+* Cannot deeply customize without extending
+* Changing later is painful
+
+---
+
+# 🧱 2️⃣ Custom User Model (What We Did)
+
+We created:
+
+```python
+class User(AbstractBaseUser, PermissionsMixin):
+```
+
+Instead of extending the default `User`, we built our own from base classes.
+
+---
+
+# 🧩 Why We Used `AbstractBaseUser`
+
+`AbstractBaseUser` provides:
+
+* password field
+* last_login field
+* password hashing methods
+* authentication helpers
+
+But it does NOT include:
+
+* username
+* email
+* is_staff
+* is_superuser
+* permissions
+
+So we define what we want.
+
+---
+
+# 🧩 Why We Used `PermissionsMixin`
+
+Adds:
+
+* is_superuser
+* groups
+* user_permissions
+
+This allows:
+
+* Admin panel access control
+* Role-based permissions
+
+---
+
+# 🏗️ Structure We Built
+
+```python
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    full_name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["full_name"]
+```
+
+---
+
+# 🔑 Important Concepts
+
+## 🔹 USERNAME_FIELD
+
+Defines the main login field.
+
+We set:
+
+```python
+USERNAME_FIELD = "email"
+```
+
+So login happens using email.
+
+---
+
+## 🔹 REQUIRED_FIELDS
+
+Used when creating superuser.
+
+Django will prompt:
+
+* email
+* full_name
+* password
+
+---
+
+## 🔹 Custom Manager
+
+We created:
+
+```python
+class UserManager(BaseUserManager)
+```
+
+Why?
+
+Because when you override User model,
+Django no longer knows how to create users.
+
+So we define:
+
+* create_user()
+* create_superuser()
+
+This ensures:
+
+* Password is hashed
+* Superuser flags are set correctly
+
+---
+
+# ⚙️ 3️⃣ Telling Django to Use Custom User
+
+Inside `settings/base.py`:
+
+```python
+AUTH_USER_MODEL = "users.User"
+```
+
+Very important.
+
+If this is missing, Django still uses default `auth_user` table.
+
+---
+
+# 🗄️ What Happened in Database?
+
+After migration, Django created:
+
+```sql
+users_user
+```
+
+Instead of:
+
+```sql
+auth_user
+```
+
+Your app now uses your custom table.
+
+---
+
+# 🔄 4️⃣ When to Create Custom User?
+
+Best Practice:
+
+✅ Always create custom user model at project start.
+❌ Never change user model after migrations grow.
+
+Changing later requires:
+
+* Dropping DB
+* Complex migrations
+* Data loss risk
+
+---
+
+# 🏗️ 5️⃣ How to Extend Further Later?
+
+If you need more fields:
+
+```python
+phone = models.CharField(max_length=15)
+avatar = models.ImageField(upload_to="avatars/")
+bio = models.TextField()
+```
+
+Just add to User model and migrate.
+
+OR
+
+Create separate Profile model:
+
+```python
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField()
+```
+
+Used when profile data becomes large.
+
+---
+
+# 🛡️ 6️⃣ Admin & App Use Same Model
+
+Important Understanding:
+
+We are NOT creating separate authentication systems.
+
+Same User model is used for:
+
+* Admin login (is_staff=True)
+* App login (JWT)
+* Permissions
+* Future features
+
+Admin is just a management UI.
+
+---
+
+# 🧠 7️⃣ Professional Rule of Thumb
+
+| Scenario             | Use          |
+| -------------------- | ------------ |
+| Small project        | Default User |
+| Email-based login    | Custom User  |
+| Production-ready app | Custom User  |
+| Complex roles        | Custom User  |
+| JWT-based system     | Custom User  |
+
+Since you're building React + DRF + JWT,
+Custom User is correct.
+
+---
+
