@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer
+from .serializers.registerserializers import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers.loginserializers import LoginSerializer
 
 
 class RegisterAPIView(APIView):
@@ -28,3 +30,7 @@ class MeAPIView(APIView):
             "email": request.user.email,
             "full_name": request.user.full_name
         })
+        
+
+class LoginAPIView(TokenObtainPairView):
+    serializer_class = LoginSerializer
